@@ -3,7 +3,9 @@ import { ScreenProps } from './Models';
 
 const Screen = ({ children, className }: ScreenProps) => {
   return (
-    <SafeAreaView className={`flex-1 bg-background px-6 ${className}`}>{children}</SafeAreaView>
+    <SafeAreaView edges={['top', 'bottom']} className={`flex-1 bg-background px-6 ${className}`}>
+      {children}
+    </SafeAreaView>
   );
 };
 

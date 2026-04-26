@@ -40,4 +40,5 @@ export const bRadiusClass = {
   lg: 'rounded-lg',
   xl: 'rounded-xl',
   full: 'rounded-full',
+  doubleXL: 'rounded-tr-2xl rounded-bl-2xl',
 } as const;

@@ -1,6 +1,6 @@
 import { View, ViewStyle } from 'react-native';
 
-import { BoxProps } from './Models';
+import { BoxProps } from './types';
 import { alignClass, bgColorClass, bRadiusClass, directionClass, justifyClass } from './tokens';
 
 const Box = ({

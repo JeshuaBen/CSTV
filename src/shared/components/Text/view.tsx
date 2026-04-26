@@ -1,6 +1,6 @@
 import { Text as RNText } from 'react-native';
 
-import { TextProps } from './Models';
+import { TextProps } from './types';
 import {
   textAlignClass,
   textColorClass,
@@ -38,7 +38,7 @@ const Text = ({
     .join(' ');
 
   return (
-    <RNText className={textClassName} style={style} {...props}>
+    <RNText className={textClassName} style={style} {...props} maxFontSizeMultiplier={1.2}>
       {children}
     </RNText>
   );

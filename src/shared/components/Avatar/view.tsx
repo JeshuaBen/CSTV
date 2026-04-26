@@ -1,8 +1,8 @@
 import { Image } from 'react-native';
-import Box from '../Box';
+import Box from '../Box/view';
 import { AvatarProps } from './Models';
 import { normalize } from '@/shared/utils/normalize';
-import Text from '../Text';
+import Text from '../Text/view';
 
 const Avatar = ({ source, label, size = 60, shape = 'circle' }: AvatarProps) => {
   return (

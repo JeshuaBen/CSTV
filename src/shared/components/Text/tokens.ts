@@ -1,4 +1,5 @@
 export const textSizeClass = {
+  xxs: 'text-xxs',
   xs: 'text-xs',
   sm: 'text-sm',
   md: 'text-md',

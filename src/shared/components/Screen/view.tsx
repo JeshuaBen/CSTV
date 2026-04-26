@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScreenProps } from './Models';
+import { ScreenProps } from './types';
 
 const Screen = ({ children, className }: ScreenProps) => {
   return (

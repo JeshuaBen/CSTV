@@ -13,7 +13,8 @@ export type BoxBgColor =
   | 'gray700'
   | 'gray600'
   | 'gray500'
-  | 'cardSurface';
+  | 'cardSurface'
+  | 'transparent';
 export type BoxRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
 export type BoxSize = number | 'full';
 

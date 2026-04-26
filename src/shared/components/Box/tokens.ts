@@ -30,6 +30,7 @@ export const bgColorClass = {
   gray600: 'bg-gray600',
   gray500: 'bg-gray500',
   cardSurface: 'bg-cardSurface',
+  transparent: 'bg-transparent',
 } as const;
 
 export const bRadiusClass = {

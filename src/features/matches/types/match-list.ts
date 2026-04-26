@@ -13,6 +13,12 @@ export type LeagueSummary = {
   serieName: string | null;
 };
 
+export type UseMatchesListParams = {
+  page?: number;
+  perPage?: number;
+  enabled?: boolean;
+};
+
 export type MatchCardModel = {
   id: number;
   status: MatchStatus;

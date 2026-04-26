@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { fetchRunningMatches, fetchUpcomingMatches } from '../../matches/api/get-matches';
 import { mapMatchesDtoToCardModels } from '../mappers/match-list-mapper';
-import { MatchCardModel } from '../types/match-list';
+import { MatchCardModel, UseMatchesListParams } from '../types/match-list';
 
 const matchStatusPriority: Record<MatchCardModel['status'], number> = {
   running: 0,
@@ -44,12 +44,6 @@ const mergeMatchesById = (matches: MatchCardModel[]) => {
 export const matchesQueryKeys = {
   all: ['matches'] as const,
   list: (page: number, perPage: number) => ['matches', 'list', page, perPage] as const,
-};
-
-export type UseMatchesListParams = {
-  page?: number;
-  perPage?: number;
-  enabled?: boolean;
 };
 
 const DEFAULT_PAGE = 1;

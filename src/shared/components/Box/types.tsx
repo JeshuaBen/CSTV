@@ -19,7 +19,7 @@ export type BoxRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'doubleXL'
 export type BoxSize = number | 'full';
 
 export type BoxProps = Omit<ViewProps, 'children' | 'style'> & {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   direction?: BoxDirection;
   align?: BoxAlign;

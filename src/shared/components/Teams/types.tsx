@@ -1,6 +1,6 @@
+import { ImageSourcePropType } from 'react-native';
+
 export type TeamProps = {
-  team1?: string;
-  team2?: string;
-  imageTeam1?: string;
-  imageTeam2?: string;
+  team1: { name: string; image?: ImageSourcePropType };
+  team2: { name: string; image?: ImageSourcePropType };
 };

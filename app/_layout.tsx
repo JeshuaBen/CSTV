@@ -44,6 +44,7 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
             contentStyle: { backgroundColor: colors.background },
+            statusBarStyle: 'light',
           }}
         />
       </QueryClientProvider>

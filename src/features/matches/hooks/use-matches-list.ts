@@ -76,3 +76,40 @@ export const useMatchesList = (params?: UseMatchesListParams) => {
     refresh: query.refetch,
   };
 };
+
+export const formatMatchDate = (match: Pick<MatchCardModel, 'beginAt' | 'scheduledAt'>) => {
+  const source = match.beginAt ?? match.scheduledAt;
+
+  if (!source) {
+    return 'Data indefinida';
+  }
+
+  const date = new Date(source);
+
+  if (Number.isNaN(date.getTime())) {
+    return 'Data indefinida';
+  }
+
+  const today = new Date();
+  const isToday =
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate();
+
+  if (isToday) {
+    const time = new Intl.DateTimeFormat('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+
+    return `Hoje, ${time}`;
+  }
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+};

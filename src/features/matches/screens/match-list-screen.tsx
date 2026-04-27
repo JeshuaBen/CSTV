@@ -1,41 +1,31 @@
 import { FlashList } from '@shopify/flash-list';
+import { router } from 'expo-router';
+import { ActivityIndicator } from 'react-native';
 
 import { hasPandaScoreToken } from '@/config/env';
 import { Box, Screen, Text } from '@/shared/components/';
+import { colors } from '@/shared/theme';
 
 import MatchCard from '../components/MatchCard/view';
-import { useMatchesList } from '../hooks/use-matches-list';
+import { formatMatchDate, useMatchesList } from '../hooks/use-matches-list';
 import { MatchCardModel } from '../types/match-list';
 
 const UNKNOWN_TEAM_NAME = 'TBD';
-
-const formatMatchDate = (match: MatchCardModel) => {
-  const source = match.beginAt ?? match.scheduledAt;
-
-  if (!source) {
-    return 'Data indefinida';
-  }
-
-  const date = new Date(source);
-
-  if (Number.isNaN(date.getTime())) {
-    return 'Data indefinida';
-  }
-
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
-};
 
 const renderMatchCard = ({ item }: { item: MatchCardModel }) => {
   const [teamA, teamB] = item.opponents;
 
   return (
     <MatchCard
+      onPress={() =>
+        router.push({
+          pathname: '/match/[id]',
+          params: {
+            id: item.id,
+            league: JSON.stringify(item.league),
+          },
+        })
+      }
       date={formatMatchDate(item)}
       teamA={{
         name: teamA?.name ?? UNKNOWN_TEAM_NAME,
@@ -65,6 +55,12 @@ export function MatchesScreen() {
           Partidas
         </Text>
 
+        {isLoadingMatches && (
+          <Box align="center" justify="center" className="flex-1">
+            <ActivityIndicator size={44} color={colors.primaryWhite} />
+          </Box>
+        )}
+
         <FlashList
           data={matches}
           keyExtractor={(item) => String(item.id)}
@@ -74,15 +70,9 @@ export function MatchesScreen() {
           showsVerticalScrollIndicator={false}
           className="mt-6"
           ListEmptyComponent={
-            <Box align="center" className="mt-10">
-              <Text color="primaryWhite" align="center">
-                {isLoadingMatches
-                  ? 'Carregando partidas...'
-                  : isError
-                    ? 'Não foi possível carregar as partidas.'
-                    : 'Nenhuma partida encontrada.'}
-              </Text>
-            </Box>
+            <Text color="primaryWhite" align="center">
+              {isError && 'Não foi possível carregar as partidas.'}
+            </Text>
           }
         />
       </Box>

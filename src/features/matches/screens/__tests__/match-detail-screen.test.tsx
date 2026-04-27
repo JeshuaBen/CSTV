@@ -6,6 +6,9 @@ import { useMatchDetail } from '../../hooks/use-matches-details';
 import MatchDetailScreen from '../match-detail-screen';
 
 jest.mock('@/config/env', () => ({
+  env: {
+    pandaScoreToken: 'test-token',
+  },
   hasPandaScoreToken: true,
 }));
 

@@ -5,6 +5,9 @@ import { useMatchesList } from '../../hooks/use-matches-list';
 import { MatchesScreen } from '../match-list-screen';
 
 jest.mock('@/config/env', () => ({
+  env: {
+    pandaScoreToken: 'test-token',
+  },
   hasPandaScoreToken: true,
 }));
 

@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/react-native';
+import { AxiosError } from 'axios';
 
 import { renderHookWithProviders } from '@/test/test-utils';
 
@@ -12,7 +13,6 @@ import {
   parseLeagueSummary,
   useMatchDetail,
 } from '../use-matches-details';
-import { HttpClientError } from '@/services/http/types';
 
 jest.mock('../../api/get-matches-details');
 
@@ -101,15 +101,7 @@ describe('useMatchDetail', () => {
   });
 
   it('keeps canceled roster errors as query errors', async () => {
-    const canceledError: HttpClientError = {
-      code: 'canceled',
-      message: 'Canceled',
-      status: null,
-      url: null,
-      method: null,
-      details: null,
-      isRetryable: false,
-    };
+    const canceledError = new AxiosError('Canceled', AxiosError.ERR_CANCELED);
     fetchTournamentRostersByIdMock.mockRejectedValue(canceledError);
 
     const { result } = renderHookWithProviders(() => useMatchDetail(10));

@@ -1,7 +1,17 @@
 import { ReactNode } from 'react';
 import { StyleProp, TextProps as RNTextProps, TextStyle } from 'react-native';
 
-export type TextSize = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'title' | 'body' | 'caption';
+export type TextSize =
+  | 'xxs'
+  | 'xs'
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
+  | 'title'
+  | 'body'
+  | 'caption'
+  | 'description';
 export type TextWeight = 400 | 500 | 600 | 700;
 export type TextColor =
   | 'background'

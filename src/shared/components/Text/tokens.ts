@@ -2,6 +2,7 @@ export const textSizeClass = {
   xxs: 'text-xxs',
   xs: 'text-xs',
   sm: 'text-sm',
+  description: 'text-description',
   md: 'text-md',
   lg: 'text-lg',
   xl: 'text-xl',

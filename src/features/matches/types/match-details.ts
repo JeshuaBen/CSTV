@@ -16,6 +16,7 @@ export type OpponentModel = {
 
 export type MatchDetailModel = {
   id: number;
+  tournamentId: number | null;
   status: MatchStatus;
   statusLabel: string;
   leagueName: string;
@@ -61,5 +62,13 @@ export type PandaMatchDetailDto = {
   serie?: Nullable<{
     name?: Nullable<string>;
   }>;
+  tournament?: Nullable<{
+    id?: Nullable<number>;
+    name?: Nullable<string>;
+  }>;
   opponents?: Nullable<PandaOpponentEntryDto[]>;
+};
+
+export type PandaTournamentRostersDto = {
+  rosters?: Nullable<PandaTeamDto[]>;
 };

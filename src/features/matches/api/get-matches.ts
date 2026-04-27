@@ -1,4 +1,4 @@
-import { endpoints } from '@/services/http/endpoints';
+import { endpoints } from '@/features/matches/api/endpoints';
 import { httpClient, withAbortSignal } from '@/services/http/client';
 
 import { PandaMatchDto } from '../types/match-list';

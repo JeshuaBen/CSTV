@@ -3,7 +3,7 @@ import { ScreenProps } from './types';
 
 const Screen = ({ children, className }: ScreenProps) => {
   return (
-    <SafeAreaView edges={['top', 'bottom']} className={`flex-1 bg-background px-6 ${className}`}>
+    <SafeAreaView edges={['top', 'bottom']} className={`flex-1 bg-background ${className}`}>
       {children}
     </SafeAreaView>
   );

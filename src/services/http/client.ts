@@ -1,27 +1,7 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, isAxiosError } from 'axios';
 
 import { env } from '../../config/env';
-
-export type HttpErrorCode =
-  | 'bad_request'
-  | 'unauthorized'
-  | 'forbidden'
-  | 'not_found'
-  | 'timeout'
-  | 'network'
-  | 'canceled'
-  | 'server'
-  | 'unknown';
-
-export type HttpClientError = {
-  code: HttpErrorCode;
-  message: string;
-  status: number | null;
-  url: string | null;
-  method: string | null;
-  details: unknown;
-  isRetryable: boolean;
-};
+import { HttpClientError, HttpErrorCode } from './types';
 
 const AXIOS_TIMEOUT_ERROR_CODES = new Set(['ECONNABORTED', 'ETIMEDOUT']);
 
@@ -60,7 +40,7 @@ export const normalizeHttpError = (error: unknown): HttpClientError => {
     return error;
   }
 
-  if (!axios.isAxiosError(error)) {
+  if (!isAxiosError(error)) {
     return {
       code: 'unknown',
       message: 'Unexpected error while processing request.',
@@ -79,7 +59,9 @@ export const normalizeHttpError = (error: unknown): HttpClientError => {
   const responseData = axiosError.response?.data;
   const isCanceled = axiosError.code === AxiosError.ERR_CANCELED;
   const isTimeout = Boolean(axiosError.code && AXIOS_TIMEOUT_ERROR_CODES.has(axiosError.code));
-  const isNetwork = Boolean(!axiosError.response && axiosError.request && !isTimeout && !isCanceled);
+  const isNetwork = Boolean(
+    !axiosError.response && axiosError.request && !isTimeout && !isCanceled,
+  );
 
   let code: HttpErrorCode = 'unknown';
 
@@ -101,9 +83,7 @@ export const normalizeHttpError = (error: unknown): HttpClientError => {
   return {
     code,
     message:
-      messageFromApi ??
-      axiosError.message ??
-      'Request failed. Please try again in a few moments.',
+      messageFromApi ?? axiosError.message ?? 'Request failed. Please try again in a few moments.',
     status,
     url,
     method,
@@ -114,8 +94,7 @@ export const normalizeHttpError = (error: unknown): HttpClientError => {
 
 export const withAbortSignal = (
   signal?: AbortSignal,
-): Pick<AxiosRequestConfig, 'signal'> | undefined =>
-  signal ? { signal } : undefined;
+): Pick<AxiosRequestConfig, 'signal'> | undefined => (signal ? { signal } : undefined);
 
 export const httpClient = axios.create({
   baseURL: 'https://api.pandascore.co',

@@ -38,7 +38,7 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider style={{ flex: 1, backgroundColor: colors.background }}>
       <QueryClientProvider client={queryClient}>
         <Stack
           screenOptions={{

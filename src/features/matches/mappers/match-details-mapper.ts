@@ -5,6 +5,7 @@ import {
   PandaMatchDetailDto,
   PandaOpponentEntryDto,
   PandaPlayerDto,
+  PandaTournamentRostersDto,
   PlayerModel,
 } from '../types/match-details';
 
@@ -85,13 +86,57 @@ const mapOpponentDtoToModel = (
   };
 };
 
-export const mapMatchDetailDtoToModel = (match: PandaMatchDetailDto): MatchDetailModel => {
+const getRosterPlayersByTeamId = (rosters?: PandaTournamentRostersDto | null) => {
+  const playersByTeamId = new Map<number, PlayerModel[]>();
+
+  for (const team of rosters?.rosters ?? []) {
+    const teamId = toSafeNumber(team.id, -1);
+
+    if (teamId < 0) {
+      continue;
+    }
+
+    playersByTeamId.set(teamId, (team.players ?? []).map(mapPlayerDtoToModel));
+  }
+
+  return playersByTeamId;
+};
+
+const mergeOpponentPlayers = (
+  opponent: OpponentModel | null,
+  playersByTeamId: Map<number, PlayerModel[]>,
+) => {
+  if (!opponent) {
+    return null;
+  }
+
+  const rosterPlayers = playersByTeamId.get(opponent.id);
+
+  if (!rosterPlayers?.length) {
+    return opponent;
+  }
+
+  return {
+    ...opponent,
+    players: rosterPlayers,
+  };
+};
+
+export const mapMatchDetailDtoToModel = (
+  match: PandaMatchDetailDto,
+  rosters?: PandaTournamentRostersDto | null,
+): MatchDetailModel => {
   const status = mapApiStatusToMatchStatus(match.status);
   const firstOpponent = mapOpponentDtoToModel(match.opponents?.[0]);
   const secondOpponent = mapOpponentDtoToModel(match.opponents?.[1]);
+  const playersByTeamId = getRosterPlayersByTeamId(rosters);
 
   return {
     id: toSafeNumber(match.id),
+    tournamentId:
+      typeof match.tournament?.id === 'number' && Number.isFinite(match.tournament.id)
+        ? match.tournament.id
+        : null,
     status,
     statusLabel: getMatchStatusLabel(status),
     leagueName: isNonEmptyString(match.league?.name) ? match.league.name : UNKNOWN_LEAGUE_NAME,
@@ -103,6 +148,9 @@ export const mapMatchDetailDtoToModel = (match: PandaMatchDetailDto): MatchDetai
       typeof match.number_of_games === 'number' && Number.isFinite(match.number_of_games)
         ? match.number_of_games
         : null,
-    opponents: [firstOpponent, secondOpponent],
+    opponents: [
+      mergeOpponentPlayers(firstOpponent, playersByTeamId),
+      mergeOpponentPlayers(secondOpponent, playersByTeamId),
+    ],
   };
 };

@@ -33,14 +33,14 @@ const MatchDetailScreen = () => {
     <Screen className="py-6">
       <Box className="flex-1">
         <Box direction="row" align="center" className="px-6">
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.back()} className="w-[10%]">
             <Feather name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
           <Text
             weight={500}
             color="primaryWhite"
             size="lg"
-            className="flex-1 ml-4"
+            className="flex-1"
             align="center"
             numberOfLines={1}
           >

@@ -32,11 +32,18 @@ const MatchDetailScreen = () => {
   return (
     <Screen className="py-6">
       <Box className="flex-1">
-        <Box direction="row" className=" px-6">
+        <Box direction="row" align="center" className="px-6">
           <TouchableOpacity onPress={() => router.back()}>
             <Feather name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
-          <Text weight={500} color="primaryWhite" size="lg" className="flex-1" align="center">
+          <Text
+            weight={500}
+            color="primaryWhite"
+            size="lg"
+            className="flex-1 ml-4"
+            align="center"
+            numberOfLines={1}
+          >
             {title}
           </Text>
         </Box>
@@ -62,9 +69,11 @@ const MatchDetailScreen = () => {
         )}
 
         {isError && (
-          <Text color="primaryWhite" align="center" className="mt-8">
-            Não foi possível carregar os detalhes da partida.
-          </Text>
+          <Box align="center" justify="center" className="flex-1">
+            <Text color="primaryWhite" align="center" className="mt-8">
+              Não foi possível carregar os detalhes da partida.
+            </Text>
+          </Box>
         )}
 
         {!isPending && !isError && (

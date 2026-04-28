@@ -16,6 +16,9 @@ O projeto foi organizado com uma arquitetura baseada em features, separando resp
 - Axios
 - Zod
 - date-fns
+- Jest
+- Jest Expo
+- React Native Testing Library
 
 ## Arquitetura Feature-Based
 
@@ -37,76 +40,6 @@ src
 +-- services
 +-- shared
 ```
-
-### `src/features`
-
-Contém as funcionalidades principais do aplicativo.
-
-Atualmente, a feature `matches` concentra a regra de negócio relacionada às partidas.
-
-### `src/features/matches/api`
-
-Camada responsável pelas chamadas para a API relacionadas a partidas.
-
-Aqui ficam arquivos como:
-
-- busca da lista de partidas;
-- busca dos detalhes de uma partida;
-- definição de endpoints.
-
-### `src/features/matches/hooks`
-
-Contém hooks específicos da feature.
-
-Esses hooks encapsulam a lógica de consumo dos dados, normalmente usando React Query para lidar com cache, estados de carregamento, erro e atualização dos dados.
-
-### `src/features/matches/mappers`
-
-Responsável por transformar os dados recebidos da API em estruturas mais seguras e adequadas para uso na interface.
-
-Essa camada ajuda a evitar que a UI dependa diretamente do formato bruto da API.
-
-### `src/features/matches/screens`
-
-Contém as telas da feature de partidas, como:
-
-- tela de listagem de partidas;
-- tela de detalhes da partida.
-
-### `src/features/matches/components`
-
-Componentes específicos da feature `matches`.
-
-Esses componentes são usados apenas ou principalmente dentro do contexto de partidas, como cards de partida e cards de jogadores.
-
-### `src/features/matches/types`
-
-Tipagens relacionadas à feature de partidas.
-
-Essa pasta ajuda a manter os contratos de dados centralizados e explícitos.
-
-### `src/shared`
-
-Contém código reutilizável entre diferentes partes da aplicação.
-
-Exemplos:
-
-- componentes compartilhados;
-- utilitários;
-- tema;
-- integrações genéricas de bibliotecas.
-
-### `src/services`
-
-Camada de serviços da aplicação.
-
-Atualmente, contém a configuração do cliente HTTP usado para comunicação com APIs externas.
-
-### `app`
-
-Contém as rotas da aplicação usando Expo Router.
-
-Essa pasta define a navegação e os pontos de entrada das telas.
 
 ## Bibliotecas Instaladas
 
@@ -141,6 +74,65 @@ Essa escolha facilita o desenvolvimento porque permite criar interfaces rapidame
 
 Também ajuda a manter consistência visual entre telas e componentes, reduzindo a necessidade de criar muitos objetos de estilo manualmente.
 
+### Jest
+
+O projeto utiliza `jest` como ferramenta principal para execução dos testes unitários.
+
+Ele permite validar componentes, hooks, helpers e telas de forma automatizada, ajudando a evitar regressões durante a evolução do projeto.
+
+### Jest Expo
+
+O projeto utiliza `jest-expo` para integrar o Jest ao ambiente Expo/React Native.
+
+Essa biblioteca fornece o preset necessário para que os testes consigam interpretar corretamente arquivos e dependências comuns em projetos Expo.
+
+### React Native Testing Library
+
+O projeto utiliza `@testing-library/react-native` para testar componentes e telas com foco no comportamento esperado pelo usuário.
+
+Ela também é usada nos testes de hooks, em conjunto com wrappers de providers, para validar fluxos que dependem de contexto, como React Query.
+
+## Testes Unitários
+
+Os testes unitários foram estruturados de forma modular, seguindo a mesma ideia da arquitetura Feature-Based do projeto.
+
+Isso significa que os testes ficam próximos do código que eles validam, dentro de pastas `__tests__`. Essa organização facilita encontrar, manter e evoluir os testes junto com cada domínio da aplicação.
+
+Exemplo da estrutura:
+
+```text
+src
++-- features
+|   +-- matches
+|       +-- hooks
+|       |   +-- __tests__
+|       +-- screens
+|           +-- __tests__
++-- shared
+|   +-- components
+|       +-- Avatar
+|       |   +-- __tests__
+|       +-- Box
+|       |   +-- __tests__
+|       +-- Screen
+|       |   +-- __tests__
+|       +-- Teams
+|       |   +-- __tests__
+|       +-- Text
+|           +-- __tests__
++-- test
+```
+
+### Cobertura
+
+O projeto possui configuração de cobertura mínima global de `80%` no Jest.
+
+Para gerar o relatório de cobertura:
+
+```bash
+npm run test:coverage
+```
+
 ## Pré-requisitos
 
 Antes de rodar o projeto, é necessário ter instalado:
@@ -159,55 +151,38 @@ Instale as dependências:
 npm install
 ```
 
-Inicie o servidor de desenvolvimento:
+Configure o access token da PandaScore no arquivo `.env`:
 
-```bash
-npm start
+```env
+EXPO_PUBLIC_PANDA_SCORE_TOKEN=seu_token_da_pandascore
 ```
 
-Rodar no Android:
+Para conseguir um token:
 
-```bash
-npm run android
-```
+1. Acesse o dashboard da PandaScore.
+2. Crie uma conta ou faça login.
+3. Copie o access token disponível no dashboard.
+4. Cole o valor no arquivo `.env`, usando exatamente o nome `EXPO_PUBLIC_PANDA_SCORE_TOKEN`.
 
-Rodar no iOS:
-
-```bash
-npm run ios
-```
-
-Rodar na Web:
-
-```bash
-npm run web
-```
-
-## Scripts Disponíveis
+Sem essa variável, o aplicativo não consegue autenticar as chamadas na API da PandaScore e os dados de partidas não serão carregados corretamente.
 
 Inicia o projeto com Expo:
 
+Utilize o executor do expo através do:
+
 ```bash
-npm start
+npx expo start
 ```
 
-Executa o app no Android:
+Esse comando abre o projeto pelo Expo Go. Ele é útil para desenvolvimento rápido, mas não reproduz fielmente a splash screen nativa configurada no `app.json`.
+
+Para validar a splash screen correta durante o desenvolvimento local no Android, use a build nativa do projeto:
 
 ```bash
 npm run android
 ```
 
-Executa o app no iOS:
-
-```bash
-npm run ios
-```
-
-Executa o app na Web:
-
-```bash
-npm run web
-```
+## Scripts Disponíveis
 
 Executa o ESLint:
 
@@ -239,9 +214,33 @@ Verifica a formatação dos arquivos:
 npm run format:check
 ```
 
+Executa os testes unitários:
+
+```bash
+npm test
+```
+
+Executa os testes em modo watch:
+
+```bash
+npm run test:watch
+```
+
+Executa os testes com relatório de cobertura:
+
+```bash
+npm run test:coverage
+```
+
 ## Gerar APK
 
 Caso deseje, o projeto possui scripts para gerar um arquivo `.apk` Android.
+
+Antes de gerar um APK após alterações de splash screen, ícone ou assets nativos, sincronize novamente o projeto Android:
+
+```bash
+npx expo prebuild --clean --platform android
+```
 
 Gerar APK de release:
 
@@ -268,9 +267,23 @@ npm run typecheck
 npm run lint
 ```
 
+### Splash Screen
+
+A splash screen usa a logo Fuze centralizada com fundo `#161621` e permanece visível por pelo menos `1.5s` antes da tela de partidas ser renderizada.
+
+Para validar a splash screen correta, rode o app nativo com `npm run android` ou gere e instale um APK/release. O Expo Go pode mostrar o ícone do app ou uma tela intermediária diferente da splash final configurada no projeto.
+
 ## Variáveis de Ambiente
 
 O projeto possui arquivo `.env` para configuração de variáveis de ambiente.
+
+Variável obrigatória:
+
+```env
+EXPO_PUBLIC_PANDA_SCORE_TOKEN=seu_token_da_pandascore
+```
+
+Esse token é usado para autenticar as requisições feitas para a PandaScore API.
 
 Caso novas variáveis sejam adicionadas, elas devem ser documentadas nesta seção para facilitar a configuração do ambiente local.
 
@@ -283,5 +296,6 @@ Antes de abrir uma alteração ou gerar uma build, recomenda-se executar:
 ```bash
 npm run typecheck
 npm run lint
+npm test
 npm run format:check
 ```

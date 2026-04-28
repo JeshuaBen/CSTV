@@ -21,13 +21,13 @@ const PlayerCard = ({ player, side = 'left' }: PlayerCardProps) => {
       justify={side === 'left' ? 'end' : 'start'}
       className={`px-2 ${side === 'left' ? 'rounded-tr-[12px]' : 'rounded-tl-[12px]'} ${side === 'left' ? 'rounded-br-[12px]' : 'rounded-bl-[12px]'} w-[50%]`}
     >
-      <Box direction="row" align="end" className="gap-4">
+      <Box direction="row" align="end" className="gap-4 px-[12px]">
         {side === 'right' && (
           <Box className="relative top-[-6]">
             <Avatar shape="square" size={48} source={image} />
           </Box>
         )}
-        <Box>
+        <Box className="py-1">
           <Text
             size="description"
             weight={700}

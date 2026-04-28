@@ -1,6 +1,5 @@
 import {
   MatchDetailModel,
-  MatchStatus,
   OpponentModel,
   PandaMatchDetailDto,
   PandaOpponentEntryDto,
@@ -8,47 +7,21 @@ import {
   PandaTournamentRostersDto,
   PlayerModel,
 } from '../types/match-details';
+import {
+  getMatchStatusLabel,
+  isNonEmptyString,
+  mapApiStatusToMatchStatus,
+  toNullableNumber,
+  toNullableString,
+  toSafeNumber,
+} from './helpers';
 
 const UNKNOWN_PLAYER_NAME = 'Unknown Player';
 const UNKNOWN_PLAYER_NICKNAME = 'Unknown';
 const UNKNOWN_TEAM_NAME = 'TBD';
 const UNKNOWN_LEAGUE_NAME = 'Unknown League';
 
-const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === 'string' && value.trim().length > 0;
-
-const toSafeNumber = (value: unknown, fallback = 0) =>
-  typeof value === 'number' && Number.isFinite(value) ? value : fallback;
-
-export const mapApiStatusToMatchStatus = (apiStatus: string | null | undefined): MatchStatus => {
-  if (!apiStatus) {
-    return 'scheduled';
-  }
-
-  const status = apiStatus.toLowerCase();
-
-  if (['running', 'live'].includes(status)) {
-    return 'running';
-  }
-
-  if (['finished', 'canceled', 'cancelled', 'postponed'].includes(status)) {
-    return 'finished';
-  }
-
-  return 'scheduled';
-};
-
-export const getMatchStatusLabel = (status: MatchStatus) => {
-  if (status === 'running') {
-    return 'In Progress';
-  }
-
-  if (status === 'finished') {
-    return 'Ended';
-  }
-
-  return 'Scheduled';
-};
+export { getMatchStatusLabel, mapApiStatusToMatchStatus } from './helpers';
 
 const getPlayerName = (player: PandaPlayerDto) => {
   if (isNonEmptyString(player.name)) {
@@ -66,7 +39,7 @@ const mapPlayerDtoToModel = (player: PandaPlayerDto): PlayerModel => ({
   id: toSafeNumber(player.id),
   name: getPlayerName(player),
   nickname: isNonEmptyString(player.name) ? player.name : UNKNOWN_PLAYER_NICKNAME,
-  imageUrl: isNonEmptyString(player.image_url) ? player.image_url : null,
+  imageUrl: toNullableString(player.image_url),
 });
 
 const mapOpponentDtoToModel = (
@@ -81,7 +54,7 @@ const mapOpponentDtoToModel = (
   return {
     id: toSafeNumber(opponent.id),
     name: isNonEmptyString(opponent.name) ? opponent.name : UNKNOWN_TEAM_NAME,
-    imageUrl: isNonEmptyString(opponent.image_url) ? opponent.image_url : null,
+    imageUrl: toNullableString(opponent.image_url),
     players: (opponent.players ?? []).map(mapPlayerDtoToModel),
   };
 };
@@ -133,21 +106,15 @@ export const mapMatchDetailDtoToModel = (
 
   return {
     id: toSafeNumber(match.id),
-    tournamentId:
-      typeof match.tournament?.id === 'number' && Number.isFinite(match.tournament.id)
-        ? match.tournament.id
-        : null,
+    tournamentId: toNullableNumber(match.tournament?.id),
     status,
     statusLabel: getMatchStatusLabel(status),
     leagueName: isNonEmptyString(match.league?.name) ? match.league.name : UNKNOWN_LEAGUE_NAME,
-    leagueImageUrl: isNonEmptyString(match.league?.image_url) ? match.league.image_url : null,
-    serieName: isNonEmptyString(match.serie?.name) ? match.serie.name : null,
-    beginAt: isNonEmptyString(match.begin_at) ? match.begin_at : null,
-    scheduledAt: isNonEmptyString(match.scheduled_at) ? match.scheduled_at : null,
-    numberOfGames:
-      typeof match.number_of_games === 'number' && Number.isFinite(match.number_of_games)
-        ? match.number_of_games
-        : null,
+    leagueImageUrl: toNullableString(match.league?.image_url),
+    serieName: toNullableString(match.serie?.name),
+    beginAt: toNullableString(match.begin_at),
+    scheduledAt: toNullableString(match.scheduled_at),
+    numberOfGames: toNullableNumber(match.number_of_games),
     opponents: [
       mergeOpponentPlayers(firstOpponent, playersByTeamId),
       mergeOpponentPlayers(secondOpponent, playersByTeamId),

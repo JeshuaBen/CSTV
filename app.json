@@ -5,38 +5,35 @@
     "scheme": "cstv",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/fuze-icon.png",
+    "icon": "./assets/fuze-app-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/Splash.png",
-          "resizeMode": "cover",
-          "backgroundColor": "#161621"
+          "image": "./assets/fuze-splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#161621",
+          "imageWidth": 240
         }
       ]
     ],
-
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/fuze-icon.png",
+        "foregroundImage": "./assets/fuze-adaptive-foreground.png",
         "backgroundColor": "#161621"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.jeshuaben.CSTV"
     },
-
     "ios": {
       "supportsTablet": true
     },
-
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/fuze-icon.png"
     }
   }
 }

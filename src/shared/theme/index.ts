@@ -9,17 +9,3 @@ export const colors = {
   gray500: '#C4C4C4',
   cardSurface: '#272639',
 } as const;
-
-export const spacing = {
-  screenPadding: 24,
-} as const;
-
-export const radius = {
-  card: 14,
-} as const;
-
-export const typography = {
-  title: 'text-title text-foreground',
-  body: 'text-body text-foreground',
-  caption: 'text-caption text-muted',
-} as const;

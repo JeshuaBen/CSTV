@@ -4,3 +4,7 @@ export type AvatarProps = {
   size?: number;
   shape?: 'circle' | 'square';
 };
+
+export type useAvatarProps = {
+  size?: number;
+};

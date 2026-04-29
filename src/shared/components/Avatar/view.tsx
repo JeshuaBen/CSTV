@@ -1,24 +1,20 @@
 import { Image } from 'react-native';
 import Box from '../Box/view';
 import { AvatarProps } from './Models';
-import { normalize } from '@/shared/utils/normalize';
 import Text from '../Text/view';
+import useAvatar from './index';
 
 const Avatar = ({ source, label, size = 60, shape = 'circle' }: AvatarProps) => {
-  const normalizedSize = normalize(size);
-  const borderRadius = shape === 'circle' ? normalizedSize / 2 : 8;
+  const { renderBorderRadius, normalizedSize } = useAvatar({ size });
 
   return (
     <Box align="center" className={`gap-[10px]`}>
       <Box
         width={normalizedSize}
         height={normalizedSize}
-        bRadius={shape === 'circle' ? 'full' : 'lg'}
+        bRadius={renderBorderRadius(shape, source)}
         bgColor={source ? 'transparent' : 'gray500'}
-        style={{
-          borderRadius,
-          overflow: 'hidden',
-        }}
+        className="overflow-hidden"
       >
         {source && (
           <Image

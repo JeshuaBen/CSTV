@@ -1,6 +1,8 @@
+import { normalize } from '@/shared/utils/normalize';
 import { ImageSourcePropType } from 'react-native';
+import { useAvatarProps } from './Models';
 
-const useAvatar = () => {
+const useAvatar = ({ size = 60 }: useAvatarProps) => {
   const renderBorderRadius = (
     shape: 'circle' | 'square',
     source: ImageSourcePropType | undefined,
@@ -15,7 +17,9 @@ const useAvatar = () => {
     return 'lg';
   };
 
-  return { renderBorderRadius };
+  const normalizedSize = normalize(size);
+
+  return { renderBorderRadius, normalizedSize };
 };
 
 export default useAvatar;

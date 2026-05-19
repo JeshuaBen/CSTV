@@ -4,6 +4,8 @@ import { AxiosError } from 'axios';
 import { renderHookWithProviders } from '@/test/test-utils';
 
 import { fetchMatchDetailById, fetchTournamentRostersById } from '../../api/get-matches-details';
+import { useMatchDetail } from '../use-matches-details';
+
 import {
   getLineupRows,
   getTeamImageSource,
@@ -11,8 +13,7 @@ import {
   getTitle,
   matchDetailQueryKeys,
   parseLeagueSummary,
-  useMatchDetail,
-} from '../use-matches-details';
+} from '../../helpers/match-details-helper';
 
 jest.mock('../../api/get-matches-details');
 

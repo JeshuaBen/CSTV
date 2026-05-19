@@ -7,13 +7,13 @@ import { Feather } from '@expo/vector-icons';
 
 import PlayerCard from '../components/PlayerCard';
 import { formatMatchDate } from '../hooks/use-matches-list';
+import { useMatchDetail } from '../hooks/use-matches-details';
 import {
   getLineupRows,
   getTeamViewModel,
   getTitle,
   parseLeagueSummary,
-  useMatchDetail,
-} from '../hooks/use-matches-details';
+} from '../helpers/match-details-helper';
 import { ActivityIndicator, TouchableOpacity } from 'react-native';
 
 const MatchDetailScreen = () => {

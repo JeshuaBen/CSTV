@@ -24,10 +24,6 @@ const UNKNOWN_LEAGUE_NAME = 'Unknown League';
 export { getMatchStatusLabel, mapApiStatusToMatchStatus } from './helpers';
 
 const getPlayerName = (player: PandaPlayerDto) => {
-  if (isNonEmptyString(player.name)) {
-    return player.name;
-  }
-
   const firstName = isNonEmptyString(player.first_name) ? player.first_name : '';
   const lastName = isNonEmptyString(player.last_name) ? player.last_name : '';
   const fullName = `${firstName} ${lastName}`.trim();

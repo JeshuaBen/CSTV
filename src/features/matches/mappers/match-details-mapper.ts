@@ -16,7 +16,7 @@ import {
   toSafeNumber,
 } from './helpers';
 
-const UNKNOWN_PLAYER_NAME = 'Unknown Player';
+const UNKNOWN_PLAYER_NAME = 'Unknown Player Name';
 const UNKNOWN_PLAYER_NICKNAME = 'Unknown';
 const UNKNOWN_TEAM_NAME = 'TBD';
 const UNKNOWN_LEAGUE_NAME = 'Unknown League';

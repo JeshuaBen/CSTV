@@ -16,7 +16,7 @@ import {
   toSafeNumber,
 } from './helpers';
 
-const UNKNOWN_PLAYER_NAME = 'Unknown Player';
+const UNKNOWN_PLAYER_NAME = 'Unknown Player Name';
 const UNKNOWN_PLAYER_NICKNAME = 'Unknown';
 const UNKNOWN_TEAM_NAME = 'TBD';
 const UNKNOWN_LEAGUE_NAME = 'Unknown League';
@@ -24,10 +24,6 @@ const UNKNOWN_LEAGUE_NAME = 'Unknown League';
 export { getMatchStatusLabel, mapApiStatusToMatchStatus } from './helpers';
 
 const getPlayerName = (player: PandaPlayerDto) => {
-  if (isNonEmptyString(player.name)) {
-    return player.name;
-  }
-
   const firstName = isNonEmptyString(player.first_name) ? player.first_name : '';
   const lastName = isNonEmptyString(player.last_name) ? player.last_name : '';
   const fullName = `${firstName} ${lastName}`.trim();

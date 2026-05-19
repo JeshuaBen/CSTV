@@ -19,6 +19,12 @@ export type UseMatchesListParams = {
   enabled?: boolean;
 };
 
+export type GetMatchesParams = {
+  page?: number;
+  perPage?: number;
+  signal?: AbortSignal;
+};
+
 export type MatchCardModel = {
   id: number;
   status: MatchStatus;
@@ -61,4 +67,18 @@ export type PandaMatchDto = {
   league?: Nullable<PandaLeagueDto>;
   serie?: Nullable<PandaSerieDto>;
   opponents?: Nullable<PandaOpponentEntryDto[]>;
+};
+
+export type PaginatedMatchesResponse = {
+  items: PandaMatchDto[];
+  page: number;
+  perPage: number;
+  total: number | null;
+  hasNextPage: boolean;
+};
+
+export type MatchesListPage = {
+  page: number;
+  matches: MatchCardModel[];
+  hasNextPage: boolean;
 };

@@ -3,12 +3,24 @@ import { act, waitFor } from '@testing-library/react-native';
 import { renderHookWithProviders } from '@/test/test-utils';
 
 import { fetchRunningMatches, fetchUpcomingMatches } from '../../api/get-matches';
+import { PandaMatchDto } from '../../types/match-list';
 import { formatMatchDate, matchesQueryKeys, useMatchesList } from '../use-matches-list';
 
 jest.mock('../../api/get-matches');
 
 const fetchRunningMatchesMock = jest.mocked(fetchRunningMatches);
 const fetchUpcomingMatchesMock = jest.mocked(fetchUpcomingMatches);
+
+const createMatchDto = (overrides: PandaMatchDto): PandaMatchDto => ({
+  id: 1,
+  status: 'not_started',
+  scheduled_at: '2026-04-28T12:00:00Z',
+  begin_at: null,
+  league: { id: 1, name: 'League A', image_url: null },
+  serie: { name: 'Serie A' },
+  opponents: [],
+  ...overrides,
+});
 
 describe('useMatchesList', () => {
   beforeEach(() => {
@@ -23,31 +35,28 @@ describe('useMatchesList', () => {
 
   it('fetches, merges duplicated ids and sorts matches by status and date', async () => {
     fetchRunningMatchesMock.mockResolvedValue([
-      {
+      createMatchDto({
         id: 2,
         status: 'running',
         begin_at: '2026-04-27T12:00:00Z',
         league: { id: 1, name: 'League A', image_url: null },
         serie: { name: 'Serie A' },
-        opponents: [],
-      },
+      }),
     ]);
     fetchUpcomingMatchesMock.mockResolvedValue([
-      {
+      createMatchDto({
         id: 3,
         status: 'not_started',
         scheduled_at: '2026-04-28T12:00:00Z',
         league: { id: 1, name: 'League A', image_url: null },
         serie: { name: 'Serie A' },
-        opponents: [],
-      },
-      {
+      }),
+      createMatchDto({
         id: 1,
         status: 'not_started',
         scheduled_at: '2026-04-29T12:00:00Z',
         league: { id: 2, name: 'League B', image_url: null },
-        opponents: [],
-      },
+      }),
     ]);
 
     const { result } = renderHookWithProviders(() => useMatchesList({ page: 2, perPage: 10 }));
@@ -77,6 +86,103 @@ describe('useMatchesList', () => {
         league: expect.objectContaining({ name: 'League B' }),
       }),
     );
+    expect(result.current.hasNextPage).toBe(false);
+  });
+
+  it('loads the next page and keeps accumulated matches deduplicated and sorted', async () => {
+    fetchRunningMatchesMock.mockImplementation(async (params) => {
+      if (params?.page === 1) {
+        return [
+          createMatchDto({
+            id: 5,
+            status: 'running',
+            begin_at: '2026-04-29T12:00:00Z',
+          }),
+          createMatchDto({
+            id: 2,
+            status: 'running',
+            begin_at: '2026-04-27T12:00:00Z',
+          }),
+          createMatchDto({
+            id: 6,
+            status: 'running',
+            begin_at: '2026-04-30T12:00:00Z',
+          }),
+        ];
+      }
+
+      return [];
+    });
+    fetchUpcomingMatchesMock.mockImplementation(async (params) => {
+      if (params?.page === 2) {
+        return [
+          createMatchDto({
+            id: 3,
+            status: 'not_started',
+            scheduled_at: '2026-04-28T12:00:00Z',
+          }),
+          createMatchDto({
+            id: 5,
+            status: 'running',
+            begin_at: '2026-04-29T12:00:00Z',
+          }),
+        ];
+      }
+
+      return [];
+    });
+
+    const { result } = renderHookWithProviders(() => useMatchesList({ perPage: 3 }));
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.hasNextPage).toBe(true);
+
+    await act(async () => {
+      await result.current.loadMore();
+    });
+
+    await waitFor(() =>
+      expect(result.current.matches.map((match) => match.id)).toEqual([2, 5, 6, 3]),
+    );
+
+    expect(fetchRunningMatchesMock).toHaveBeenCalledWith({
+      page: 2,
+      perPage: 3,
+      signal: expect.any(AbortSignal),
+    });
+    expect(fetchUpcomingMatchesMock).toHaveBeenCalledWith({
+      page: 2,
+      perPage: 3,
+      signal: expect.any(AbortSignal),
+    });
+    expect(result.current.hasNextPage).toBe(false);
+    expect(result.current.isFetchingNextPage).toBe(false);
+  });
+
+  it('does not expose a next page when both endpoints return fewer items than perPage', async () => {
+    fetchRunningMatchesMock.mockResolvedValue([
+      createMatchDto({ id: 1 }),
+      createMatchDto({ id: 2 }),
+    ]);
+    fetchUpcomingMatchesMock.mockResolvedValue([createMatchDto({ id: 3 })]);
+
+    const { result } = renderHookWithProviders(() => useMatchesList({ perPage: 3 }));
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.hasNextPage).toBe(false);
+  });
+
+  it('does not load more when the query is disabled', () => {
+    const { result } = renderHookWithProviders(() => useMatchesList({ enabled: false }));
+
+    act(() => {
+      result.current.loadMore();
+    });
+
+    expect(fetchRunningMatchesMock).not.toHaveBeenCalled();
+    expect(fetchUpcomingMatchesMock).not.toHaveBeenCalled();
   });
 
   it('exposes refresh as the query refetch function', async () => {

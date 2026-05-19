@@ -42,10 +42,23 @@ const renderMatchCard = ({ item }: { item: MatchCardModel }) => {
   );
 };
 
+const renderListFooter = (isFetchingNextPage: boolean) => {
+  return isFetchingNextPage ? (
+    <Box align="center" justify="center" className="py-4">
+      <ActivityIndicator
+        testID="matches-list-footer-loading"
+        size="small"
+        color={colors.primaryWhite}
+      />
+    </Box>
+  ) : null;
+};
+
 export function MatchesScreen() {
-  const { matches, isPending, isError, isRefreshing, refresh } = useMatchesList({
-    enabled: hasPandaScoreToken,
-  });
+  const { matches, isPending, isError, isRefreshing, isFetchingNextPage, refresh, loadMore } =
+    useMatchesList({
+      enabled: hasPandaScoreToken,
+    });
   const isLoadingMatches = hasPandaScoreToken && isPending;
 
   return (
@@ -67,8 +80,11 @@ export function MatchesScreen() {
           renderItem={renderMatchCard}
           refreshing={isRefreshing}
           onRefresh={refresh}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
           showsVerticalScrollIndicator={false}
           className="mt-6"
+          ListFooterComponent={renderListFooter(isFetchingNextPage)}
           ListEmptyComponent={
             <Text color="primaryWhite" align="center">
               {isError && 'Não foi possível carregar as partidas.'}

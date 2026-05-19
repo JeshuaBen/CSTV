@@ -50,7 +50,10 @@ describe('MatchesScreen', () => {
       isPending: false,
       isError: false,
       isRefreshing: false,
+      isFetchingNextPage: false,
+      hasNextPage: false,
       refresh: jest.fn(),
+      loadMore: jest.fn(),
     } as any);
   });
 
@@ -60,7 +63,10 @@ describe('MatchesScreen', () => {
       isPending: true,
       isError: false,
       isRefreshing: false,
+      isFetchingNextPage: false,
+      hasNextPage: false,
       refresh: jest.fn(),
+      loadMore: jest.fn(),
     } as any);
 
     const { getByText, UNSAFE_getByProps } = render(<MatchesScreen />);
@@ -75,7 +81,10 @@ describe('MatchesScreen', () => {
       isPending: false,
       isError: true,
       isRefreshing: false,
+      isFetchingNextPage: false,
+      hasNextPage: false,
       refresh: jest.fn(),
+      loadMore: jest.fn(),
     } as any);
 
     const { getByText } = render(<MatchesScreen />);
@@ -85,6 +94,7 @@ describe('MatchesScreen', () => {
 
   it('renders matches, refreshes and navigates to details', () => {
     const refresh = jest.fn();
+    const loadMore = jest.fn();
     useMatchesListMock.mockReturnValue({
       matches: [
         {
@@ -104,7 +114,10 @@ describe('MatchesScreen', () => {
       isPending: false,
       isError: false,
       isRefreshing: true,
+      isFetchingNextPage: false,
+      hasNextPage: true,
       refresh,
+      loadMore,
     } as any);
 
     const { getByText, getByTestId } = render(<MatchesScreen />);
@@ -115,9 +128,11 @@ describe('MatchesScreen', () => {
     expect(getByTestId('flash-list').props.refreshing).toBe(true);
 
     fireEvent(getByTestId('flash-list'), 'refresh');
+    fireEvent(getByTestId('flash-list'), 'endReached');
     fireEvent.press(getByText('FURIA'));
 
     expect(refresh).toHaveBeenCalledTimes(1);
+    expect(loadMore).toHaveBeenCalledTimes(1);
     expect(routerPushMock).toHaveBeenCalledWith({
       pathname: '/match/[id]',
       params: {
@@ -125,5 +140,22 @@ describe('MatchesScreen', () => {
         league: JSON.stringify({ id: 1, name: 'CBLOL', serieName: 'Split 1', imageUrl: null }),
       },
     });
+  });
+
+  it('renders the pagination footer while loading the next page', () => {
+    useMatchesListMock.mockReturnValue({
+      matches: [],
+      isPending: false,
+      isError: false,
+      isRefreshing: false,
+      isFetchingNextPage: true,
+      hasNextPage: true,
+      refresh: jest.fn(),
+      loadMore: jest.fn(),
+    } as any);
+
+    const { getByTestId } = render(<MatchesScreen />);
+
+    expect(getByTestId('matches-list-footer-loading')).toBeTruthy();
   });
 });
